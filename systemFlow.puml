@@ -1,0 +1,63 @@
+@startuml RCT Receiver Activity Diagram
+
+start
+
+:Power On;
+
+fork
+    while(always)
+        fork
+            : uhd_usrp_probe;
+        fork again
+            : wait for gps;
+        fork again
+            : check filesystem;
+        end fork
+
+        : start Ping Finder;
+        : stop Ping Finder;
+    endwhile
+fork again
+    :Connect to GCS Server;
+    fork
+        while(always)
+            : process incoming TCP messages;
+        endwhile
+    fork again
+        while(always)
+            : send heartbeat;
+        endwhile
+    end fork
+end fork
+
+:Power Off;
+
+stop
+@enduml
+
+
+@startuml RCT GCS Activity Diagram
+
+start
+
+:Initialize RCT Server;
+fork
+    while(always)
+        :Send Heartbeats;
+    endwhile
+fork again
+    while(always)
+        :Receive Pings; 
+    endwhile
+    :Display Pings;
+    if (> 3 Receivers connected) then (True)
+        :Calculate Estimate/Precision;
+        :Display Estimate/Precision;
+    endif
+fork again
+    :User Command Input;
+    :Command Sent to Receivers;
+end fork
+end
+
+@enduml

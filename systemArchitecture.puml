@@ -1,0 +1,29 @@
+@startuml Lizard Tracking Architeture
+left to right direction
+package ReceiverStation_x_N {
+    component OBC {
+        [System Manager]
+        [Sensor Fusion]
+        [Ping Detector]-->[Sensor Fusion]
+        [Disk Storage]
+    }
+    [Antenna]-left->[LNA]: Coax
+    [LNA]-left->[SDR]: Coax
+    [SDR]-left->[Ping Detector]: USB
+    [UI Board]-left->[Sensor Fusion]: Serial
+    [System Manager]-->[UI Board]: Serial
+    [Sensor Fusion]..>[Disk Storage]
+    [Sleep Timer]-->OBC: Serial
+    [Payload Compass]-up->[UI Board]: I2C
+    [GPS]-right->[UI Board]: Serial
+}
+[Transmitter]-left->[Antenna]: RF Signal
+
+package GCS {
+    [Location Estimator]..>[Estimate Visualization]
+    [Payload Control]<-up->[System Manager]: TCP
+}
+
+[Sensor Fusion]..>[Location Estimator]
+
+@enduml
