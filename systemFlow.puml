@@ -13,12 +13,14 @@ fork
         fork again
             : check filesystem;
         end fork
-
-        : start Ping Finder;
-        : stop Ping Finder;
+        if (ready) then
+            : start Ping Finder;
+            : save Pings to Disk;
+        endif
     endwhile
 fork again
-    :Connect to GCS Server;
+    :Connect to GCS Server; 
+    note left: Register unique ID
     fork
         while(always)
             : process incoming TCP messages;
@@ -41,6 +43,7 @@ stop
 start
 
 :Initialize RCT Server;
+note left: Register each client's unique ID
 fork
     while(always)
         :Send Heartbeats;
